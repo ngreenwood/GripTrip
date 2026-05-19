@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Frisbee Hold Randomizer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+      text-align: center;
+    }
+    #display {
+      font-size: 2rem;
+      padding: 2rem;
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      cursor: pointer;
+    }
+    #description {
+      font-size: 0.9rem;
+      font-style: italic;
+      margin-top: 0.5rem;
+      color: #555;
+    }
+    #players {
+      margin-top: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .player-button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 1rem;
+      background-color: #d0f0d0;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .eliminated {
+      background-color: #f08080;
+    }
+  </style>
+</head>
+<body>
+  <div id="display" onclick="showNextHold()">
+    Tap to Start
+    <div id="description"></div>
+  </div>
+
+  <div id="players"></div>
+
+  <script>
+    const holds = [
+      { number: 1, name: "Hug Hold", description: "Hold the disc to your chest." },
+      { number: 2, name: "Forehand", description: "Two fingers on inside rim, thumb on top." },
+      { number: 3, name: "Backhand", description: "Four fingers under, thumb on top." },
+      { number: 4, name: "Clap Catch", description: "One palm on top, one palm under." },
+      { number: 5, name: "Steering Wheel", description: "Both hands gripping the edges." },  
+      { number: 6, name: "High Rim Catch", description: "Four finger aobve, thumb under." },
+      { number: 7, name: "Low Rim Catch", description: "Four finger under, thumb above." },
+      { number: 8, name: "The Pinch", description: "Three finger pinch." },
+      { number: 9, name: "The Waiter", description: "Balance it upsidedown on palm." },
+      { number: 10, name: "Connoisseur's Touch", description: "Only fingertips on the disc." },
+      { number: 11, name: "Two Finger", description: "Pinch the disc with two fingers." },
+      { number: 12, name: "Close Your Eyes", description: "Hold any way—but no peeking!" },
+      { number: 13, name: "Thumb & Pinky", description: "Hold with only thumb and pinky!" },
+      { number: 14, name: "Thumbs Only", description: "Two thumb hold." },
+      { number: 15, name: "The Hook", description: "One finger only!" },
+      { number: 16, name: "No Eyes", description: "Close your eyes until the next grip!" }
+    ];
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    const introSequence = [holds[1], holds[2], holds[3], holds[4]];
+    shuffle(introSequence);
+    introSequence.unshift(holds[0]); // Always start with #1 (Hug Hold)
+
+    let mainSequence = shuffle(holds.slice(5));
+    let currentSequence = [...introSequence];
+    let inIntro = true;
+
+    function showNextHold() {
+      if (currentSequence.length === 0) {
+        if (inIntro) {
+          currentSequence = [...mainSequence];
+          inIntro = false;
+        } else {
+          const allHolds = [...holds];
+          currentSequence = shuffle(allHolds);
+        }
+      }
+      const hold = currentSequence.shift();
+      document.getElementById("display").firstChild.textContent = `#${hold.number}: ${hold.name}`;
+      document.getElementById("description").textContent = hold.description;
+    }
+
+    const playerNames = [
+      "Alexander", "Aleksi", "Christian M", "Christian S", "Coby",
+      "George", "Collin", "Kai", "John", "Logan", "Lucas", "Levi",
+      "Nicholas", "Otto", "Owen", "Stewart", "Wayne", "Shai"
+    ];
+    const playersDiv = document.getElementById("players");
+
+    playerNames.forEach(name => {
+      const btn = document.createElement("button");
+      btn.textContent = name;
+      btn.className = "player-button";
+      btn.onclick = () => btn.classList.toggle("eliminated");
+      playersDiv.appendChild(btn);
+    });
+  </script>
+</body>
+</html>
